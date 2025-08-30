@@ -1,0 +1,8 @@
+# 📊 Análisis IDA -- EDA — Introducción
+
+# Este proyecto tiene como propósito convertirse en una guía útil para aquel o aquellos que están comenzando, incluso para los que no saben programar.
+
+# La base de datos que se procede a estudiar fue descargada desde Kaggle.
+
+# Se trabajó en Google Colab. 
+# Los datos trabajados corresponden a college_student_placemente_datos. Este archivo de tipo csv contiene dos tipos de datos, los cuales son categoricas y numéricas.
