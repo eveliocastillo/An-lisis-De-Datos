@@ -1,0 +1,229 @@
+-- Eliminar la base de datos si existe para evitar conflictos
+DROP DATABASE IF EXISTS GUAYERD_EDIT;
+
+-- Crear la base de datos
+CREATE DATABASE GUAYERD_EDIT;
+USE GUAYERD_EDIT;
+
+-- Crear tablas
+CREATE TABLE tipo_donante (
+    Id_tipo INT PRIMARY KEY AUTO_INCREMENT,
+    Tipo_donante VARCHAR(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE estado_donante (
+    Id_estado INT PRIMARY KEY AUTO_INCREMENT,
+    Estado_donante VARCHAR(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE pais (
+    Id_pais INT PRIMARY KEY AUTO_INCREMENT,
+    Pais VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE razon_social (
+    Id_razon_social INT PRIMARY KEY AUTO_INCREMENT,
+    Razon_social VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE contribuyente (
+    Id_contribuyente INT PRIMARY KEY AUTO_INCREMENT,
+    Tipo_contribuyente VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE frecuencia (
+    Id_frecuencia INT PRIMARY KEY AUTO_INCREMENT,
+    Frecuencia VARCHAR(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE categ_proveedores (
+    Id_categoria INT PRIMARY KEY AUTO_INCREMENT,
+    Categoria VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE ciudad (
+    Id_ciudad INT PRIMARY KEY AUTO_INCREMENT,
+    Ciudad VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE cuenta (
+    Id_cuenta INT PRIMARY KEY AUTO_INCREMENT,
+    Nro_cuenta VARCHAR(20) NOT NULL,
+    Tipo_cuenta VARCHAR(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE donantes (
+    Id_donante VARCHAR(15) NOT NULL PRIMARY KEY,
+    Nombre VARCHAR(100),
+    CUIT VARCHAR(20),
+    Correo_electronico VARCHAR(100),
+    Telefono VARCHAR(20),
+    Alta DATE,
+    Baja DATE,
+    Id_tipo INT,
+    Id_razon_social INT,
+    Id_contribuyente INT,
+    Id_estado INT,
+    Id_frecuencia INT,
+    Id_pais INT,
+    FOREIGN KEY (Id_tipo) REFERENCES tipo_donante(Id_tipo) ON DELETE CASCADE,
+    FOREIGN KEY (Id_razon_social) REFERENCES razon_social(Id_razon_social) ON DELETE CASCADE,
+    FOREIGN KEY (Id_contribuyente) REFERENCES contribuyente(Id_contribuyente) ON DELETE CASCADE,
+    FOREIGN KEY (Id_estado) REFERENCES estado_donante(Id_estado) ON DELETE CASCADE,
+    FOREIGN KEY (Id_frecuencia) REFERENCES frecuencia(Id_frecuencia) ON DELETE CASCADE,
+    FOREIGN KEY (Id_pais) REFERENCES pais(Id_pais) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE proveedores (
+    Id_proveedor VARCHAR(15) NOT NULL PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    CUIT VARCHAR(20) NOT NULL,
+    Contacto VARCHAR(50),
+    Correo_electronico VARCHAR(100),
+    Id_categoria INT,
+    Id_contribuyente INT,
+    Id_razon_social INT,
+    Id_ciudad INT,
+    Id_pais INT,
+    FOREIGN KEY (Id_categoria) REFERENCES categ_proveedores(Id_categoria) ON DELETE CASCADE,
+    FOREIGN KEY (Id_contribuyente) REFERENCES contribuyente(Id_contribuyente) ON DELETE CASCADE,
+    FOREIGN KEY (Id_razon_social) REFERENCES razon_social(Id_razon_social) ON DELETE CASCADE,
+    FOREIGN KEY (Id_ciudad) REFERENCES ciudad(Id_ciudad) ON DELETE CASCADE,
+    FOREIGN KEY (Id_pais) REFERENCES pais(Id_pais) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE ingresos (
+    Id_ingreso INT PRIMARY KEY AUTO_INCREMENT,
+    Id_donante VARCHAR(15),
+    Tipo_movimiento VARCHAR(10),
+    Fecha DATE NOT NULL,
+    Importe DECIMAL(15, 2) NOT NULL,
+    Id_cuenta INT,
+    FOREIGN KEY (Id_donante) REFERENCES donantes(Id_donante) ON DELETE CASCADE,
+    FOREIGN KEY (Id_cuenta) REFERENCES cuenta(Id_cuenta) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+CREATE TABLE egresos (
+    Id_egreso INT PRIMARY KEY AUTO_INCREMENT,
+    Id_proveedor VARCHAR(15),
+    Tipo_movimiento VARCHAR(10),
+    Fecha DATE NOT NULL,
+    Importe DECIMAL(15, 2) NOT NULL,
+    Id_cuenta INT,
+    FOREIGN KEY (Id_proveedor) REFERENCES proveedores(Id_proveedor) ON DELETE CASCADE,
+    FOREIGN KEY (Id_cuenta) REFERENCES cuenta(Id_cuenta) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- Insertar datos de prueba
+INSERT INTO tipo_donante (Tipo_donante) VALUES ('Individual'), ('Corporación');
+INSERT INTO estado_donante (Estado_donante) VALUES ('Activo'), ('Inactivo');
+INSERT INTO pais (Pais) VALUES ('Argentina'), ('Brasil');
+INSERT INTO razon_social (Razon_social) VALUES ('Sociedad Anónima'), ('Sociedad Responsabilidad Limitada');
+INSERT INTO contribuyente (Tipo_contribuyente) VALUES ('IVA Responsable'), ('IVA Exento');
+INSERT INTO frecuencia (Frecuencia) VALUES ('Mensual'), ('Anual');
+INSERT INTO categ_proveedores (Categoria) VALUES ('Tecnología'), ('Alimentos');
+INSERT INTO ciudad (Ciudad) VALUES ('Buenos Aires'), ('Sao Paulo');
+INSERT INTO cuenta (Nro_cuenta, Tipo_cuenta) VALUES ('1234567', 'Corriente'), ('7654321', 'Ahorro');
+INSERT INTO donantes (Id_donante, Nombre, CUIT, Correo_electronico, Telefono, Alta, Baja, Id_tipo, Id_razon_social, Id_contribuyente, Id_estado, Id_frecuencia, Id_pais) VALUES 
+('DON001', 'Juan Perez', '20-12345678-9', 'juan@example.com', '123456789', '2022-01-01', NULL, 1, 1, 1, 1, 1, 1),
+('DON002', 'Empresa XYZ', '30-98765432-1', 'empresa@example.com', '987654321', '2022-02-01', NULL, 2, 2, 2, 1, 2, 2);
+INSERT INTO proveedores (Id_proveedor, Nombre, CUIT, Contacto, Correo_electronico, Id_categoria, Id_contribuyente, Id_razon_social, Id_ciudad, Id_pais) VALUES 
+('PROV001', 'Proveedor A', '20-11111111-1', 'Contacto A', 'proveedora@example.com', 1, 1, 1, 1, 1),
+('PROV002', 'Proveedor B', '20-22222222-2', 'Contacto B', 'proveedorb@example.com', 2, 2, 2, 2, 2);
+INSERT INTO ingresos (Id_donante, Tipo_movimiento, Fecha, Importe, Id_cuenta) VALUES 
+('DON001', 'Ingreso', '2022-03-01', 1000.00, 1),
+('DON002', 'Ingreso', '2022-03-02', 2000.00, 2);
+INSERT INTO egresos (Id_proveedor, Tipo_movimiento, Fecha, Importe, Id_cuenta) VALUES 
+('PROV001', 'Egreso', '2022-03-03', 500.00, 1),
+('PROV002', 'Egreso', '2022-03-04', 1500.00, 2);
+
+-- Ejecutar consultas con mensajes identificativos
+SELECT '=== CONSULTA 1: Select simple de donantes ===' AS Mensaje;
+SELECT * FROM donantes;
+
+SELECT '=== CONSULTA 2: Función SUM en ingresos ===' AS Mensaje;
+SELECT SUM(Importe) AS Total_Ingresos FROM ingresos;
+
+SELECT '=== CONSULTA 3: Función AVG en egresos ===' AS Mensaje;
+SELECT AVG(Importe) AS Promedio_Egresos FROM egresos;
+
+SELECT '=== CONSULTA 4: Filtro WHERE en donantes ===' AS Mensaje;
+SELECT * FROM donantes WHERE Id_tipo = 1;
+
+SELECT '=== CONSULTA 5: JOIN Inner Join donantes con pais ===' AS Mensaje;
+SELECT d.Nombre, p.Pais 
+FROM donantes d 
+INNER JOIN pais p ON d.Id_pais = p.Id_pais;
+
+SELECT '=== CONSULTA 6: JOIN Left Join donantes con pais ===' AS Mensaje;
+SELECT d.Nombre, p.Pais 
+FROM donantes d 
+LEFT JOIN pais p ON d.Id_pais = p.Id_pais;
+
+SELECT '=== CONSULTA 7: ORDER BY en ingresos ===' AS Mensaje;
+SELECT * FROM ingresos ORDER BY Fecha DESC;
+
+SELECT '=== CONSULTA 8: HAVING en ingresos ===' AS Mensaje;
+SELECT Id_donante, SUM(Importe) AS Total_Ingresos 
+FROM ingresos 
+GROUP BY Id_donante 
+HAVING SUM(Importe) > 1000;
+
+SELECT '=== CONSULTA 9: HAVING en egresos ===' AS Mensaje;
+SELECT Id_proveedor, AVG(Importe) AS Promedio_Egresos
+FROM egresos
+GROUP BY Id_proveedor
+HAVING AVG(Importe) > 500;
+
+SELECT '=== CONSULTA 10: GROUP BY en ingresos ===' AS Mensaje;
+SELECT Id_donante, SUM(Importe) AS Total_Ingresos 
+FROM ingresos 
+GROUP BY Id_donante;
+
+SELECT '=== CONSULTA 11: EXISTS en donantes ===' AS Mensaje;
+SELECT * FROM donantes 
+WHERE EXISTS (SELECT 1 FROM ingresos WHERE ingresos.Id_donante = donantes.Id_donante);
+
+SELECT '=== CONSULTA 12: BETWEEN en ingresos ===' AS Mensaje;
+SELECT * FROM ingresos 
+WHERE Fecha BETWEEN '2022-01-01' AND '2022-12-31';
+
+SELECT '=== CONSULTA 13: LIKE en donantes ===' AS Mensaje;
+SELECT * FROM donantes 
+WHERE Nombre LIKE '%Juan%';
+
+SELECT '=== CONSULTA 14: LIMIT en ingresos ===' AS Mensaje;
+SELECT * FROM ingresos 
+ORDER BY Fecha DESC 
+LIMIT 10;
+
+SELECT '=== CONSULTA 15: DISTINCT en ingresos ===' AS Mensaje;
+SELECT DISTINCT Id_donante FROM ingresos;
+
+SELECT '=== CONSULTA 16: ALIAS en ingresos ===' AS Mensaje;
+SELECT Importe AS monto_donaciones
+FROM ingresos
+WHERE Importe > 75000;
+
+SELECT '=== CONSULTA 17: Proveedores con más transacciones ===' AS Mensaje;
+SELECT e.Id_proveedor,
+p.nombre AS NOMBRE_CLIENTE_FRECUENTE,
+COUNT(e.Id_proveedor) AS MAX_CANT_TRANSACCIONES
+FROM egresos e
+INNER JOIN proveedores p ON e.Id_proveedor = p.Id_proveedor
+GROUP BY e.Id_proveedor, p.Nombre
+HAVING COUNT(e.Id_egreso) > 5;
+
+SELECT '=== CONSULTA 18: El máximo proveedor ===' AS Mensaje;
+SELECT 
+  e.Id_proveedor,
+  COUNT(e.Id_egreso) AS MAX_TRANSACCIONES,
+  p.Nombre AS PROVEEDOR_MAX
+FROM 
+  egresos e
+  INNER JOIN proveedores p ON e.Id_proveedor = p.Id_proveedor
+GROUP BY 
+  e.Id_proveedor, p.Nombre
+ORDER BY 
+  COUNT(e.Id_egreso) DESC
+LIMIT 1;
